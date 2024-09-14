@@ -50,4 +50,4 @@ class DeepNeuralNetwork:
     @property
     def weights(self):
         """hold all weights"""
-        return self.__weight
+        return self.__weights
