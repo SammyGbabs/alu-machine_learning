@@ -16,7 +16,7 @@ def availableShips(passengerCount):
     while res.status_code == 200:
         res = res.json()
         for ship in res['results']:
-            passengers = ship['passengers']
+            passengers = ship['passengers'].replace(',', '')
             try:
                 if int(passengers) >= passengerCount:
                     output.append(ship['name'])
