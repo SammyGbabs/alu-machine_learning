@@ -7,6 +7,7 @@ import requests
 
 
 def availableShips(passengerCount):
+    """Returns a list of ships"""
     url = 'https://swapi-api.alx-tools.com/api/starships/'
 
     res = requests.get(url)
