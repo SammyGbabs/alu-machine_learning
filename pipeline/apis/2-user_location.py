@@ -1,27 +1,23 @@
 #!/usr/bin/env python3
 
-"""Returns the list of names of the home planets of all sentient species"""
+"""Script that prints the location of a specific user"""
 
 import requests
+import sys
+import time
 
 
-def sentientPlanets():
-    """ Return list of names of the home planets of all sentient species"""
+if __name__ == "__main__":
+    res = requests.get(sys.argv[1])
 
-    url = "https://swapi-api.alx-tools.com/api/species/?page=1"
-    planets = []
+    if res.status_code == 403:
+        rate_limit = int(res.headers.get('X-Ratelimit-Reset'))
+        current_time = int(time.time())
+        diff = int((rate_limit - current_time) / 60)
+        print('Reset in {} min'.format(int(diff)))
 
-    while url:
-        response = requests.get(url).json()
-
-        for specy in response['results']:
-            classification = specy['classification']
-            designation = specy['designation']
-            if classification == 'sentient' or designation == 'sentient':
-                if specy['homeworld']:
-                    get_planet = requests.get(specy['homeworld']).json()
-                    planets.append(get_planet['name'])
-
-        url = response['next']
-
-    return planets
+    elif res.status_code == 404:
+        print("Not found")
+    elif res.status_code == 200:
+        res = res.json()
+        print(res['location'])
