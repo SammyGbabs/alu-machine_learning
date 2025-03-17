@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""
-Defines function that creates a variational autoencoder
-"""
-
-
+"""Creates variational autoencoder"""
 import tensorflow.keras as keras
 
 
@@ -11,6 +7,7 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     """
     Creates a variational autoencoder
     """
+    
     if type(input_dims) is not int:
         raise TypeError(
             "input_dims must be an int containing dimensions of model input")
@@ -24,25 +21,13 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     if type(latent_dims) is not int:
         raise TypeError("latent_dims must be an int containing dimensions of \
         latent space representation")
-
     # encoder
     encoder_inputs = keras.Input(shape=(input_dims,))
     encoder_value = encoder_inputs
     for i in range(len(hidden_layers)):
-        encoder_layer = keras.layers.Conv2D(hidden_layers[i],
-                                            activation='relu',
-                                            kernel_size=(3, 3),
-                                            padding='same')
+        encoder_layer = keras.layers.Dense(units=hidden_layers[i],
+                                           activation='relu')
         encoder_value = encoder_layer(encoder_value)
-        encoder_batch_norm = keras.layers.BatchNormalization()
-        encoder_value = encoder_batch_norm(encoder_value)
-    encoder_flatten = keras.layers.Flatten()
-    encoder_value = encoder_flatten(encoder_value)
-    encoder_dense = keras.layers.Dense(activation='relu')
-    encoder_value = encoder_dense(encoder_value)
-    encoder_batch_norm = keras.layers.BatchNormalization()
-    encoder_value = encoder_batch_norm(encoder_value)
-
     encoder_output_layer = keras.layers.Dense(units=latent_dims,
                                               activation='relu')
     encoder_outputs = encoder_output_layer(encoder_value)
@@ -65,5 +50,4 @@ def autoencoder(input_dims, hidden_layers, latent_dims):
     auto = keras.Model(inputs=inputs, outputs=decoder(encoder(inputs)))
     auto.compile(optimizer='adam',
                  loss='binary_crossentropy')
-
     return encoder, decoder, auto
